@@ -36,8 +36,8 @@ import {
 
 const THEMES = [
   'cyberpunk futurista',
-  'mistÃ©rio na escola',
-  'aventura no espaÃ§o',
+  'mistério na escola',
+  'aventura no espaço',
   'gamer e eSports',
   'moda e estilo',
 ];
@@ -294,7 +294,7 @@ const App: React.FC = () => {
         const newErrors = isCorrect ? prev.errors : prev.errors + 1;
 
         const pressedLower = typed === ' ' ? ' ' : typed.toLowerCase();
-        const mapKey = pressedLower === ' ' ? 'EspaÃ§o' : pressedLower;
+        const mapKey = pressedLower === ' ' ? 'Espaço' : pressedLower;
         const finger = FINGER_MAP[mapKey];
         const side = typeof finger === 'string' && finger.startsWith('left') ? 'left' : typeof finger === 'string' && finger.startsWith('right') ? 'right' : null;
 
@@ -407,9 +407,9 @@ const App: React.FC = () => {
               <span className="inline-flex items-center gap-2">
                 <Sparkles size={14} className="text-fuchsia-500" /> LVL {level}
               </span>
-              <span>â€¢</span>
+              <span>•</span>
               <span className="text-sky-700">{profile.xp} XP</span>
-              <span>â€¢</span>
+              <span>•</span>
               <span className="inline-flex items-center gap-2 text-orange-600">
                 <Flame size={14} /> {profile.streak} streak
               </span>
@@ -444,13 +444,13 @@ const App: React.FC = () => {
           {/* Welcome */}
           <section className="text-center space-y-6 py-8">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 border border-sky-200 text-sky-700 text-xs font-black uppercase tracking-widest mb-4">
-              <Sparkles size={14} /> MissÃµes rÃ¡pidas â€¢ Treino de dedos â€¢ Jogos
+              <Sparkles size={14} /> Missões rápidas • Treino de dedos • Jogos
             </div>
             <h2 className="text-5xl md:text-7xl font-black max-w-4xl mx-auto leading-[1.1] tracking-tight">
-              Digite com as <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-600 via-fuchsia-500 to-emerald-500 animate-gradient">2 mÃ£os</span>
+              Digite com as <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-600 via-fuchsia-500 to-emerald-500 animate-gradient">2 mãos</span>
             </h2>
             <p className="text-slate-600 text-xl max-w-2xl mx-auto font-medium">
-              SessÃµes curtinhas, metas claras e treino inteligente que foca exatamente no que vocÃª precisa.
+              Sessões curtinhas, metas claras e treino inteligente que foca exatamente no que você precisa.
             </p>
 
             {/* Theme picker */}
@@ -475,7 +475,7 @@ const App: React.FC = () => {
           <section>
             <div className="flex items-center gap-4 mb-10">
               <div className="h-px flex-grow bg-sky-200"></div>
-              <h3 className="text-xs font-black uppercase tracking-[0.3em] text-slate-500">Selecione sua MissÃ£o</h3>
+              <h3 className="text-xs font-black uppercase tracking-[0.3em] text-slate-500">Selecione sua Missão</h3>
               <div className="h-px flex-grow bg-sky-200"></div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -502,7 +502,7 @@ const App: React.FC = () => {
                 </div>
                 <h3 className="text-3xl font-black mb-4">Treino Inteligente</h3>
                 <p className="text-slate-600 text-lg leading-relaxed">
-                  O modo <span className="text-amber-600 font-black">MissÃ£o Inteligente</span> aprende com seus erros e cria exercÃ­cios sob medida.
+                  O modo <span className="text-amber-600 font-black">Missão Inteligente</span> aprende com seus erros e cria exercícios sob medida.
                 </p>
               </div>
             </section>
@@ -540,7 +540,7 @@ const App: React.FC = () => {
                 <span className="text-3xl font-mono font-black text-sky-700">{calculateWPM()}</span>
               </div>
               <div className="bg-white/75 px-6 py-3 rounded-2xl border border-emerald-200 flex flex-col items-center min-w-[100px] shadow-sm">
-                <span className="text-[10px] text-slate-500 font-black uppercase tracking-widest mb-1">PrecisÃ£o</span>
+                <span className="text-[10px] text-slate-500 font-black uppercase tracking-widest mb-1">Precisão</span>
                 <span className="text-3xl font-mono font-black text-emerald-600">{calculateAccuracy()}%</span>
               </div>
             </div>
@@ -633,7 +633,7 @@ const App: React.FC = () => {
 
                 <div className="p-8 bg-gradient-to-br from-sky-100/80 to-fuchsia-100/70 border-2 border-sky-300/60 rounded-[2rem] max-w-xl w-full text-center shadow-xl">
                   <p className="text-sky-700 font-black uppercase tracking-[0.3em] text-xs mb-3">
-                    {runResult.success ? 'MISSÃƒO CONCLUÃDA' : 'QUASE! TENTA DE NOVO'}
+                    {runResult.success ? 'MISSÃO CONCLUÍDA' : 'QUASE! TENTA DE NOVO'}
                   </p>
                   <div className="flex flex-wrap items-center justify-center gap-3 mb-5">
                     <span className="px-4 py-2 rounded-full bg-white/85 border border-sky-200 text-slate-800 font-black">{runResult.wpm} WPM</span>
@@ -659,7 +659,7 @@ const App: React.FC = () => {
                     }}
                     className="flex items-center justify-center gap-3 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white px-10 py-4 rounded-2xl font-black text-lg transition-all transform hover:scale-105 active:scale-95 shadow-[0_10px_30px_rgba(249,115,22,0.35)]"
                   >
-                    <Sparkles size={22} /> PrÃ³xima (Inteligente)
+                    <Sparkles size={22} /> Próxima (Inteligente)
                   </button>
                 </div>
               </div>
@@ -684,11 +684,12 @@ const App: React.FC = () => {
       />
 
       <footer className="mt-auto py-12 text-slate-600 text-[10px] font-black uppercase tracking-[0.5em]">
-        &copy; 2024 TypeMaster AI â€¢ MissÃµes & Treino de Dedos
+        &copy; 2024 TypeMaster AI • Missões & Treino de Dedos
       </footer>
     </div>
   );
 };
 
 export default App;
+
 

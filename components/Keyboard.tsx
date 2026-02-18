@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { KEYBOARD_LAYOUT, FINGER_MAP } from '../constants';
 
 interface KeyboardProps {
@@ -7,7 +7,7 @@ interface KeyboardProps {
 
 const Keyboard: React.FC<KeyboardProps> = ({ activeKey }) => {
   const getFingerStyle = (key: string) => {
-    const finger = FINGER_MAP[key === ' ' ? 'EspaÃ§o' : key.toLowerCase()];
+    const finger = FINGER_MAP[key === ' ' ? 'Espaço' : key.toLowerCase()];
     if (!finger) return 'border-slate-200 text-slate-400';
 
     if (finger.includes('pinky')) return 'border-rose-300 text-rose-500';
@@ -19,7 +19,7 @@ const Keyboard: React.FC<KeyboardProps> = ({ activeKey }) => {
   };
 
   const getActiveStyle = (key: string) => {
-    const finger = FINGER_MAP[key === ' ' ? 'EspaÃ§o' : key.toLowerCase()];
+    const finger = FINGER_MAP[key === ' ' ? 'Espaço' : key.toLowerCase()];
     if (finger?.includes('pinky')) return 'bg-rose-400 shadow-[0_0_16px_rgba(251,113,133,0.45)]';
     if (finger?.includes('ring')) return 'bg-cyan-400 shadow-[0_0_16px_rgba(34,211,238,0.45)]';
     if (finger?.includes('middle')) return 'bg-emerald-400 shadow-[0_0_16px_rgba(52,211,153,0.45)]';
@@ -33,14 +33,14 @@ const Keyboard: React.FC<KeyboardProps> = ({ activeKey }) => {
       {KEYBOARD_LAYOUT.map((row, rowIndex) => (
         <div key={rowIndex} className="flex justify-center gap-2">
           {row.map((key, keyIndex) => {
-            const isPressed = activeKey.toLowerCase() === key.toLowerCase() || (activeKey === ' ' && key === 'EspaÃ§o');
+            const isPressed = activeKey.toLowerCase() === key.toLowerCase() || (activeKey === ' ' && key === 'Espaço');
 
             return (
               <div
                 key={keyIndex}
                 className={`
                   flex items-center justify-center rounded-xl font-mono text-sm font-bold transition-all duration-100
-                  ${key === 'EspaÃ§o' ? 'w-72 h-14' : 'w-12 h-14'}
+                  ${key === 'Espaço' ? 'w-72 h-14' : 'w-12 h-14'}
                   ${
                     isPressed
                       ? `${getActiveStyle(key)} text-white scale-90`
@@ -49,7 +49,7 @@ const Keyboard: React.FC<KeyboardProps> = ({ activeKey }) => {
                   border-2
                 `}
               >
-                {key === 'EspaÃ§o' ? '' : key}
+                {key === 'Espaço' ? '' : key}
               </div>
             );
           })}
@@ -77,3 +77,4 @@ const Keyboard: React.FC<KeyboardProps> = ({ activeKey }) => {
 };
 
 export default Keyboard;
+
