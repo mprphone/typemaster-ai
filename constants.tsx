@@ -2,19 +2,42 @@
 import React from 'react';
 import { Lesson, LessonType } from './types';
 
+function hasMojibake(text: string): boolean {
+  return /Ã.|Â|â[\u0080-\u00bf]|�/.test(text);
+}
+
+function repairMojibake(text: string): string {
+  if (!text || !hasMojibake(text)) return text;
+  try {
+    const bytes = Uint8Array.from(Array.from(text).map((ch) => ch.charCodeAt(0) & 0xff));
+    return new TextDecoder('utf-8').decode(bytes);
+  } catch {
+    return text;
+  }
+}
+
+function sanitizeLesson(lesson: Lesson): Lesson {
+  return {
+    ...lesson,
+    title: repairMojibake(lesson.title),
+    description: repairMojibake(lesson.description),
+    content: lesson.content ? repairMojibake(lesson.content) : lesson.content,
+  };
+}
+
 export const KEYBOARD_LAYOUT = [
   ['`', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace'],
   ['Tab', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\\'],
   ['Caps', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', "'", 'Enter'],
   ['Shift', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/', 'Shift'],
-  ['EspaÃ§o']
+  ['Espa\u00e7o']
 ];
 
-export const INITIAL_LESSONS: Lesson[] = [
+const RAW_INITIAL_LESSONS: Lesson[] = [
   {
     id: '1',
-    title: 'Base de OperaÃ§Ãµes',
-    description: 'Domine a fileira central (asdf jkl;). Onde tudo comeÃ§a!',
+    title: 'Base de Opera\u00e7\u00f5es',
+    description: 'Domine a fileira central (asdf jkl;). Onde tudo come\u00e7a!',
     type: LessonType.HOME_ROW,
     level: 1,
     guideLink: 'https://youtu.be/eoL1bMXzKiE',
@@ -23,7 +46,7 @@ export const INITIAL_LESSONS: Lesson[] = [
   {
     id: '2',
     title: 'Escalada de Dedos',
-    description: 'AlcanÃ§ando a fileira de cima (qwerty uiop). Suba de nÃ­vel!',
+    description: 'Alcan\u00e7ando a fileira de cima (qwerty uiop). Suba de n\u00edvel!',
     type: LessonType.TOP_ROW,
     level: 2,
     guideLink: 'https://youtu.be/aTul4pS9DM0',
@@ -47,7 +70,7 @@ export const INITIAL_LESSONS: Lesson[] = [
   },
   {
     id: '6',
-    title: 'Combo: Alterna as MÃ£os',
+    title: 'Combo: Alterna as M\u00e3os',
     description: 'Jogo de ritmo: esquerda-direita, esquerda-direita. Sem olhar!',
     type: LessonType.ALTERNATING,
     level: 3,
@@ -57,15 +80,15 @@ export const INITIAL_LESSONS: Lesson[] = [
   {
     id: '7',
     title: 'Sprint 30s (Speedrun)',
-    description: '30 segundos para fazer o mÃ¡ximo possÃ­vel. Vai, vai, vai!',
+    description: '30 segundos para fazer o m\u00e1ximo poss\u00edvel. Vai, vai, vai!',
     type: LessonType.SPRINT,
     level: 4,
     timeLimitSec: 30
   },
   {
     id: '8',
-    title: 'MissÃ£o Inteligente',
-    description: 'Treino adaptativo: foca nas teclas onde vocÃª mais erra.',
+    title: 'Miss\u00e3o Inteligente',
+    description: 'Treino adaptativo: foca nas teclas onde voc\u00ea mais erra.',
     type: LessonType.ADAPTIVE,
     level: 4,
     timeLimitSec: 40,
@@ -73,12 +96,14 @@ export const INITIAL_LESSONS: Lesson[] = [
   },
   {
     id: '4',
-    title: 'MissÃ£o IA: Aventura',
-    description: 'PrÃ¡tica dinÃ¢mica com histÃ³rias geradas por IA em tempo real.',
+    title: 'Miss\u00e3o IA: Aventura',
+    description: 'Pr\u00e1tica din\u00e2mica com hist\u00f3rias geradas por IA em tempo real.',
     type: LessonType.AI_STORY,
     level: 4
   }
 ];
+
+export const INITIAL_LESSONS: Lesson[] = RAW_INITIAL_LESSONS.map(sanitizeLesson);
 
 export const FINGER_MAP: Record<string, string> = {
   'q': 'left-pinky', 'a': 'left-pinky', 'z': 'left-pinky', '1': 'left-pinky',
@@ -89,6 +114,6 @@ export const FINGER_MAP: Record<string, string> = {
   'i': 'right-middle', 'k': 'right-middle', ',': 'right-middle', '8': 'right-middle',
   'o': 'right-ring', 'l': 'right-ring', '.': 'right-ring', '9': 'right-ring',
   'p': 'right-pinky', ';': 'right-pinky', '/': 'right-pinky', '0': 'right-pinky', '-': 'right-pinky', '=': 'right-pinky', '[': 'right-pinky', ']': 'right-pinky', "'": 'right-pinky',
-  'EspaÃ§o': 'thumb'
+  'Espa\u00e7o': 'thumb'
 };
 

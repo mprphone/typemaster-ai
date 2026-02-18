@@ -110,28 +110,91 @@ function isYouTubeUrl(url: string): boolean {
   }
 }
 
+function extractYouTubeVideoId(url: string): string | null {
+  try {
+    const parsed = new URL(url);
+    const host = parsed.hostname.toLowerCase();
+    const path = parsed.pathname;
+
+    if (host.includes('youtu.be')) {
+      const id = path.replace(/^\/+/, '').split('/')[0];
+      return id || null;
+    }
+
+    if (!host.includes('youtube.com')) return null;
+    if (path === '/watch') return parsed.searchParams.get('v');
+    if (path.startsWith('/embed/')) return path.split('/')[2] || null;
+    if (path.startsWith('/shorts/')) return path.split('/')[2] || null;
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+function buildYouTubeEmbedUrl(src: string, nonce?: number): string | null {
+  const videoId = extractYouTubeVideoId(src);
+  if (!videoId) return null;
+
+  try {
+    const embedUrl = new URL(`https://www.youtube-nocookie.com/embed/${videoId}`);
+    embedUrl.searchParams.set('autoplay', '1');
+    embedUrl.searchParams.set('mute', '1');
+    embedUrl.searchParams.set('playsinline', '1');
+    embedUrl.searchParams.set('rel', '0');
+    embedUrl.searchParams.set('modestbranding', '1');
+    embedUrl.searchParams.set('iv_load_policy', '3');
+    if (typeof nonce === 'number') {
+      embedUrl.searchParams.set('t', String(nonce));
+    }
+    return embedUrl.toString();
+  } catch {
+    return null;
+  }
+}
+
+function buildPlayerUrl(src: string, speed = '0.8', nonce?: number): string | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    const wrapper = new URL('/video-player.html', window.location.origin);
+    wrapper.searchParams.set('src', src);
+    wrapper.searchParams.set('speed', speed);
+    wrapper.searchParams.set('autoplay', '1');
+    if (typeof nonce === 'number') {
+      wrapper.searchParams.set('ts', String(nonce));
+    }
+    return wrapper.toString();
+  } catch {
+    return null;
+  }
+}
+
 const LessonIntroModal: React.FC<LessonIntroModalProps> = ({ lesson, open, isPreparing, onClose, onStart }) => {
   const [resourceLinkInput, setResourceLinkInput] = useState('');
+  const [playerNonce, setPlayerNonce] = useState(0);
 
   useEffect(() => {
     if (!open || !lesson) return;
     setResourceLinkInput(lesson.guideLink || '');
+    setPlayerNonce((prev) => prev + 1);
   }, [open, lesson]);
 
   const normalizedResourceLink = useMemo(() => normalizeHttpUrl(resourceLinkInput), [resourceLinkInput]);
   const intro = useMemo(() => (lesson ? getIntro(lesson) : null), [lesson]);
   const hasInvalidResourceLink = resourceLinkInput.trim().length > 0 && !normalizedResourceLink;
   const youtubeLink = normalizedResourceLink ? isYouTubeUrl(normalizedResourceLink) : false;
+  const inlinePlayerUrl = useMemo(() => {
+    if (!normalizedResourceLink) return null;
+    if (youtubeLink) return buildYouTubeEmbedUrl(normalizedResourceLink, playerNonce);
+    return buildPlayerUrl(normalizedResourceLink, '0.8', playerNonce);
+  }, [normalizedResourceLink, youtubeLink, playerNonce]);
 
   if (!open || !lesson || !intro) return null;
 
   const openResourceLink = () => {
     if (!normalizedResourceLink) return;
     if (youtubeLink) {
-      const wrapper = new URL('/video-player.html', window.location.origin);
-      wrapper.searchParams.set('src', normalizedResourceLink);
-      wrapper.searchParams.set('speed', '0.8');
-      window.open(wrapper.toString(), '_blank', 'noopener,noreferrer');
+      const playerUrl = buildPlayerUrl(normalizedResourceLink, '0.8');
+      if (playerUrl) window.open(playerUrl, '_blank', 'noopener,noreferrer');
       return;
     }
     window.open(normalizedResourceLink, '_blank', 'noopener,noreferrer');
@@ -139,7 +202,7 @@ const LessonIntroModal: React.FC<LessonIntroModalProps> = ({ lesson, open, isPre
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-sky-100/60 backdrop-blur-md">
-      <div className="w-full max-w-4xl rounded-[2rem] border border-sky-200 bg-white/90 shadow-[0_30px_80px_-20px_rgba(14,116,144,0.35)] overflow-hidden">
+      <div className="w-full max-w-6xl max-h-[94vh] overflow-y-auto rounded-[2rem] border border-sky-200 bg-white/90 shadow-[0_30px_80px_-20px_rgba(14,116,144,0.35)]">
         <div className="flex items-center justify-between px-6 py-4 border-b border-sky-100 bg-gradient-to-r from-sky-50 via-rose-50 to-emerald-50">
           <div>
             <p className="text-[11px] font-black uppercase tracking-[0.25em] text-sky-700">Aula rapida antes da missao</p>
@@ -215,18 +278,19 @@ const LessonIntroModal: React.FC<LessonIntroModalProps> = ({ lesson, open, isPre
                       disabled={!normalizedResourceLink}
                       className="rounded-xl border border-sky-300 bg-sky-500 text-white px-4 py-2 text-xs font-black uppercase tracking-widest disabled:opacity-40 disabled:cursor-not-allowed hover:bg-sky-600"
                     >
-                      {youtubeLink ? 'Abrir 0.8x' : 'Abrir link'}
+                      {youtubeLink ? 'Nova aba 0.8x' : 'Abrir link'}
                     </button>
                   </div>
                   {youtubeLink && (
                     <p className="mt-2 text-[11px] font-semibold text-sky-700">
-                      Para YouTube, o player abre automaticamente em modo mais lento.
+                      O video toca abaixo no modal. Para velocidade fixa em 0.8x, usa Nova Aba.
                     </p>
                   )}
                   {hasInvalidResourceLink && (
                     <p className="mt-2 text-[11px] font-semibold text-rose-600">Link invalido. Usa formato http:// ou https://</p>
                   )}
                 </div>
+
               </div>
             </div>
           </div>
@@ -246,6 +310,27 @@ const LessonIntroModal: React.FC<LessonIntroModalProps> = ({ lesson, open, isPre
               </p>
               <p className="text-sm font-semibold text-slate-700">{intro.missionFocus}</p>
             </div>
+          </div>
+
+          <div className="lg:col-span-5 rounded-2xl border border-sky-200 bg-sky-50/60 p-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
+              <p className="text-[11px] font-black uppercase tracking-[0.18em] text-sky-700">Video da aula</p>
+              <p className="text-xs font-semibold text-slate-600">
+                {youtubeLink ? 'Inline em autoplay (mudo). Usa Nova Aba para 0.8x fixo.' : 'Reproducao inline dentro do modal.'}
+              </p>
+            </div>
+            {inlinePlayerUrl ? (
+              <iframe
+                title={`Video da ${lesson.title}`}
+                src={inlinePlayerUrl}
+                className="w-full h-[260px] sm:h-[340px] lg:h-[460px] rounded-xl border border-sky-200 bg-white"
+                allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+                allowFullScreen
+                referrerPolicy="strict-origin-when-cross-origin"
+              />
+            ) : (
+              <p className="text-sm text-slate-600">Cole um link valido para reproduzir aqui.</p>
+            )}
           </div>
         </div>
 

@@ -120,6 +120,8 @@
     const src = (params.get("src") || "").trim();
     const desiredSpeedRaw = Number.parseFloat(params.get("speed") || "0.8");
     const desiredSpeed = Number.isFinite(desiredSpeedRaw) && desiredSpeedRaw > 0 ? desiredSpeedRaw : 0.8;
+    const autoplayRaw = (params.get("autoplay") || "1").trim();
+    const shouldAutoplay = autoplayRaw !== "0" && autoplayRaw.toLowerCase() !== "false";
 
     const playerBox = document.getElementById("playerBox");
     const speedLabel = document.getElementById("speedLabel");
@@ -207,11 +209,20 @@
           playerVars: {
             playsinline: 1,
             rel: 0,
-            modestbranding: 1
+            modestbranding: 1,
+            autoplay: shouldAutoplay ? 1 : 0
           },
           events: {
-            onReady: () => {
+            onReady: (event) => {
               applyRate(desiredSpeed);
+              if (shouldAutoplay) {
+                try {
+                  event.target.mute();
+                  event.target.playVideo();
+                } catch {
+                  // Ignore autoplay failures from browser policy.
+                }
+              }
             }
           }
         });
@@ -234,7 +245,16 @@
       htmlVideo.src = videoUrl;
       htmlVideo.controls = true;
       htmlVideo.playsInline = true;
-      htmlVideo.onloadedmetadata = () => applyRate(desiredSpeed);
+      htmlVideo.autoplay = shouldAutoplay;
+      htmlVideo.muted = shouldAutoplay;
+      htmlVideo.onloadedmetadata = () => {
+        applyRate(desiredSpeed);
+        if (shouldAutoplay) {
+          htmlVideo.play().catch(() => {
+            // Ignore autoplay failures from browser policy.
+          });
+        }
+      };
       playerBox.appendChild(htmlVideo);
       setSpeedLabel(desiredSpeed);
     }
