@@ -1,4 +1,4 @@
-
+﻿
 import React from 'react';
 import { Lesson, LessonType } from './types';
 
@@ -7,24 +7,26 @@ export const KEYBOARD_LAYOUT = [
   ['Tab', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\\'],
   ['Caps', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', "'", 'Enter'],
   ['Shift', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/', 'Shift'],
-  ['Espaço']
+  ['EspaÃ§o']
 ];
 
 export const INITIAL_LESSONS: Lesson[] = [
   {
     id: '1',
-    title: 'Base de Operações',
-    description: 'Domine a fileira central (asdf jkl;). Onde tudo começa!',
+    title: 'Base de OperaÃ§Ãµes',
+    description: 'Domine a fileira central (asdf jkl;). Onde tudo comeÃ§a!',
     type: LessonType.HOME_ROW,
     level: 1,
+    guideLink: 'https://youtu.be/eoL1bMXzKiE',
     content: 'asdf jkl; asdf jkl; a s d f j k l ;'
   },
   {
     id: '2',
     title: 'Escalada de Dedos',
-    description: 'Alcançando a fileira de cima (qwerty uiop). Suba de nível!',
+    description: 'AlcanÃ§ando a fileira de cima (qwerty uiop). Suba de nÃ­vel!',
     type: LessonType.TOP_ROW,
     level: 2,
+    guideLink: 'https://youtu.be/aTul4pS9DM0',
     content: 'qwer uiop qwer uiop q w e r u i o p'
   },
   {
@@ -45,7 +47,7 @@ export const INITIAL_LESSONS: Lesson[] = [
   },
   {
     id: '6',
-    title: 'Combo: Alterna as Mãos',
+    title: 'Combo: Alterna as MÃ£os',
     description: 'Jogo de ritmo: esquerda-direita, esquerda-direita. Sem olhar!',
     type: LessonType.ALTERNATING,
     level: 3,
@@ -55,15 +57,15 @@ export const INITIAL_LESSONS: Lesson[] = [
   {
     id: '7',
     title: 'Sprint 30s (Speedrun)',
-    description: '30 segundos para fazer o máximo possível. Vai, vai, vai!',
+    description: '30 segundos para fazer o mÃ¡ximo possÃ­vel. Vai, vai, vai!',
     type: LessonType.SPRINT,
     level: 4,
     timeLimitSec: 30
   },
   {
     id: '8',
-    title: 'Missão Inteligente',
-    description: 'Treino adaptativo: foca nas teclas onde você mais erra.',
+    title: 'MissÃ£o Inteligente',
+    description: 'Treino adaptativo: foca nas teclas onde vocÃª mais erra.',
     type: LessonType.ADAPTIVE,
     level: 4,
     timeLimitSec: 40,
@@ -71,8 +73,8 @@ export const INITIAL_LESSONS: Lesson[] = [
   },
   {
     id: '4',
-    title: 'Missão IA: Aventura',
-    description: 'Prática dinâmica com histórias geradas por IA em tempo real.',
+    title: 'MissÃ£o IA: Aventura',
+    description: 'PrÃ¡tica dinÃ¢mica com histÃ³rias geradas por IA em tempo real.',
     type: LessonType.AI_STORY,
     level: 4
   }
@@ -87,5 +89,6 @@ export const FINGER_MAP: Record<string, string> = {
   'i': 'right-middle', 'k': 'right-middle', ',': 'right-middle', '8': 'right-middle',
   'o': 'right-ring', 'l': 'right-ring', '.': 'right-ring', '9': 'right-ring',
   'p': 'right-pinky', ';': 'right-pinky', '/': 'right-pinky', '0': 'right-pinky', '-': 'right-pinky', '=': 'right-pinky', '[': 'right-pinky', ']': 'right-pinky', "'": 'right-pinky',
-  'Espaço': 'thumb'
+  'EspaÃ§o': 'thumb'
 };
+

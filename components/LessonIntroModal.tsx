@@ -1,5 +1,5 @@
-import React from 'react';
-import { Eye, Hand, Keyboard, PlayCircle, Sparkles, X } from 'lucide-react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Eye, Hand, Keyboard, Link2, PlayCircle, Sparkles, X } from 'lucide-react';
 import { Lesson, LessonType } from '../types';
 
 interface IntroContent {
@@ -86,9 +86,56 @@ function getIntro(lesson: Lesson): IntroContent {
   };
 }
 
+function normalizeHttpUrl(raw: string): string | null {
+  const trimmed = raw.trim();
+  if (!trimmed) return null;
+
+  try {
+    const normalized = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+    const parsed = new URL(normalized);
+    if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') return null;
+    return parsed.toString();
+  } catch {
+    return null;
+  }
+}
+
+function isYouTubeUrl(url: string): boolean {
+  try {
+    const parsed = new URL(url);
+    const host = parsed.hostname.toLowerCase();
+    return host.includes('youtube.com') || host.includes('youtu.be');
+  } catch {
+    return false;
+  }
+}
+
 const LessonIntroModal: React.FC<LessonIntroModalProps> = ({ lesson, open, isPreparing, onClose, onStart }) => {
-  if (!open || !lesson) return null;
-  const intro = getIntro(lesson);
+  const [resourceLinkInput, setResourceLinkInput] = useState('');
+
+  useEffect(() => {
+    if (!open || !lesson) return;
+    setResourceLinkInput(lesson.guideLink || '');
+  }, [open, lesson]);
+
+  const normalizedResourceLink = useMemo(() => normalizeHttpUrl(resourceLinkInput), [resourceLinkInput]);
+  const intro = useMemo(() => (lesson ? getIntro(lesson) : null), [lesson]);
+  const hasInvalidResourceLink = resourceLinkInput.trim().length > 0 && !normalizedResourceLink;
+  const youtubeLink = normalizedResourceLink ? isYouTubeUrl(normalizedResourceLink) : false;
+
+  if (!open || !lesson || !intro) return null;
+
+  const openResourceLink = () => {
+    if (!normalizedResourceLink) return;
+    if (youtubeLink) {
+      const wrapper = new URL('/video-player.html', window.location.origin);
+      wrapper.searchParams.set('src', normalizedResourceLink);
+      wrapper.searchParams.set('speed', '0.8');
+      window.open(wrapper.toString(), '_blank', 'noopener,noreferrer');
+      return;
+    }
+    window.open(normalizedResourceLink, '_blank', 'noopener,noreferrer');
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-sky-100/60 backdrop-blur-md">
@@ -148,6 +195,37 @@ const LessonIntroModal: React.FC<LessonIntroModalProps> = ({ lesson, open, isPre
                     </p>
                     <p className="text-xs text-slate-700">Constante, sem pressa no inicio.</p>
                   </div>
+                </div>
+
+                <div className="mt-4 rounded-xl border border-sky-200 bg-white/80 px-3 py-3">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-sky-700 mb-2 inline-flex items-center gap-1">
+                    <Link2 size={12} /> Link de apoio (opcional)
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    <input
+                      type="text"
+                      value={resourceLinkInput}
+                      onChange={(e) => setResourceLinkInput(e.target.value)}
+                      placeholder="Cole um link aqui (ex: https://...)"
+                      className="flex-1 rounded-xl border border-sky-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none focus:border-sky-400"
+                    />
+                    <button
+                      type="button"
+                      onClick={openResourceLink}
+                      disabled={!normalizedResourceLink}
+                      className="rounded-xl border border-sky-300 bg-sky-500 text-white px-4 py-2 text-xs font-black uppercase tracking-widest disabled:opacity-40 disabled:cursor-not-allowed hover:bg-sky-600"
+                    >
+                      {youtubeLink ? 'Abrir 0.8x' : 'Abrir link'}
+                    </button>
+                  </div>
+                  {youtubeLink && (
+                    <p className="mt-2 text-[11px] font-semibold text-sky-700">
+                      Para YouTube, o player abre automaticamente em modo mais lento.
+                    </p>
+                  )}
+                  {hasInvalidResourceLink && (
+                    <p className="mt-2 text-[11px] font-semibold text-rose-600">Link invalido. Usa formato http:// ou https://</p>
+                  )}
                 </div>
               </div>
             </div>

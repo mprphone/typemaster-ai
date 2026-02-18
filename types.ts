@@ -18,6 +18,7 @@ export interface Lesson {
   type: LessonType;
   level: number;
   content?: string;
+  guideLink?: string;
   timeLimitSec?: number;
   minAccuracy?: number;
   minWpm?: number;
