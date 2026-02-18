@@ -1,0 +1,43 @@
+/* Extra effects to make it more "gamey" and colorful */
+
+@keyframes floatUp {
+  0% { transform: translateY(0) scale(1); opacity: 0; }
+  15% { opacity: 1; }
+  100% { transform: translateY(-60px) scale(1.1); opacity: 0; }
+}
+
+.tm-float {
+  animation: floatUp 900ms ease-out forwards;
+}
+
+@keyframes confetti {
+  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(220px) rotate(720deg); opacity: 0; }
+}
+
+.tm-confetti {
+  position: absolute;
+  top: -12px;
+  width: 10px;
+  height: 16px;
+  border-radius: 3px;
+  animation: confetti 1.1s ease-in forwards;
+}
+
+.tm-focus-ring:focus {
+  outline: none;
+}
+
+.tm-glow {
+  box-shadow: 0 0 0 2px rgba(14,165,233,0.22), 0 0 40px rgba(236,72,153,0.16);
+}
+
+@keyframes coachBob {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+  100% { transform: translateY(0); }
+}
+
+.tm-coach-bob {
+  animation: coachBob 2.4s ease-in-out infinite;
+}
